@@ -13,6 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+html {
+  overflow: hidden;
+  cursor: none;
+}
+
 body {
   margin: 0;
 }
