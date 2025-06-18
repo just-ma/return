@@ -1,7 +1,17 @@
-import { useRef } from "react";
+import { useState, useRef } from "react";
 import styled from "styled-components";
 import useVideo from "./useVideo";
-import TestVideo from "./assets/test.mov";
+import PlaneNightVideo from "./assets/plane-night.mov";
+import SeagullsVideo from "./assets/seagulls.mov";
+import WindTurbineVideo from "./assets/wind-turbine.mov";
+import YellowFieldVideo from "./assets/yellow-field.mov";
+
+const VIDEOS = [
+  PlaneNightVideo,
+  SeagullsVideo,
+  WindTurbineVideo,
+  YellowFieldVideo,
+];
 
 const Container = styled.div`
   display: flex;
@@ -11,6 +21,7 @@ const Container = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 999;
 `;
 
 const Video = styled.video<{ $hidden: boolean }>`
@@ -40,10 +51,18 @@ const VideoPlayer = ({ src }: { src: string }) => {
 };
 
 export default function VideoContainer() {
+  const [index, setIndex] = useState(0);
+
   return (
-    <Container>
-      <VideoPlayer src={TestVideo} />
-      <VideoPlayer src={TestVideo} />
+    <Container onClick={() => setIndex((index + 1) % (VIDEOS.length * 2))}>
+      <VideoPlayer src={VIDEOS[Math.floor(index / 2)]} />
+      <VideoPlayer
+        src={
+          VIDEOS[
+            index === VIDEOS.length * 2 - 1 ? 0 : Math.floor((index + 1) / 2)
+          ]
+        }
+      />
     </Container>
   );
 }

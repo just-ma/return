@@ -62,7 +62,7 @@ const STATES = _STATES.reduce((acc, state) => {
 export default function useVideo(
   ref: React.RefObject<HTMLVideoElement | null>
 ) {
-  const [hidden, setHidden] = useState(false);
+  const [hidden, setHidden] = useState(true);
   const [flicker, setFlicker] = useState(false);
 
   useEffect(() => {
