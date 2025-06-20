@@ -1,4 +1,4 @@
-import VideoContainer, { NUM_VIDEOS } from "./VideoContainer";
+import VideoContainer from "./VideoContainer";
 import styled from "styled-components";
 import { useState, useRef, useEffect } from "react";
 
@@ -25,7 +25,6 @@ const ScrollContainer = styled.div`
 `;
 
 export default function App() {
-  const [index, setIndex] = useState(0);
   const [opacity, setOpacity] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,11 +48,8 @@ export default function App() {
   }, []);
 
   return (
-    <Container
-      ref={containerRef}
-      onClick={() => setIndex((prev) => (prev + 1) % (NUM_VIDEOS * 2))}
-    >
-      <VideoContainer index={index} opacity={opacity} />
+    <Container ref={containerRef}>
+      <VideoContainer opacity={opacity} />
       <ScrollContainer />
     </Container>
   );

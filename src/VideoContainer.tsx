@@ -1,18 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import useVideo from "./useVideo";
-import PlaneNightVideo from "./assets/plane-night.mov";
-import SeagullsVideo from "./assets/seagulls.mov";
-import WindTurbineVideo from "./assets/wind-turbine.mov";
-import YellowFieldVideo from "./assets/yellow-field.mov";
+import { VIDEOS, NUM_VIDEOS } from "./videos";
 
-const VIDEOS = [
-  PlaneNightVideo,
-  SeagullsVideo,
-  WindTurbineVideo,
-  YellowFieldVideo,
-];
-export const NUM_VIDEOS = VIDEOS.length;
 const easeOutSine = (x: number) => Math.sin((x * Math.PI) / 2);
 
 const Container = styled.div<{ opacity: number }>`
@@ -35,10 +25,16 @@ const Video = styled.video<{ $hidden: boolean }>`
   opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
 `;
 
-const VideoPlayer = ({ src }: { src: string }) => {
+const VideoPlayer = ({
+  src,
+  stateNameRef,
+}: {
+  src: string;
+  stateNameRef: React.RefObject<number>;
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const hidden = useVideo(videoRef);
+  const hidden = useVideo(videoRef, stateNameRef);
 
   return (
     <Video
@@ -53,14 +49,42 @@ const VideoPlayer = ({ src }: { src: string }) => {
   );
 };
 
-export default function VideoContainer({
-  index,
-  opacity,
-}: {
-  index: number;
-  opacity: number;
-}) {
+export default function VideoContainer({ opacity }: { opacity: number }) {
+  const stateNameRef = useRef(2);
+
   const [dimmed, setDimmed] = useState(true);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      switch (e.key) {
+        case "ArrowLeft":
+          setIndex((prev) => (prev - 1) % NUM_VIDEOS);
+          break;
+        case "ArrowRight":
+          setIndex((prev) => (prev + 1) % NUM_VIDEOS);
+          break;
+        case "1": {
+          stateNameRef.current = 1;
+          break;
+        }
+        case "2": {
+          stateNameRef.current = 2;
+          break;
+        }
+        case "3": {
+          stateNameRef.current = 3;
+          break;
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyPress);
+    };
+  }, []);
 
   useEffect(() => {
     let id: number | undefined;
@@ -77,11 +101,13 @@ export default function VideoContainer({
 
   return (
     <Container opacity={dimmed ? easeOutSine(opacity) : opacity}>
-      <VideoPlayer src={VIDEOS[Math.floor(index / 2)]} />
       <VideoPlayer
-        src={
-          VIDEOS[index === NUM_VIDEOS * 2 - 1 ? 0 : Math.floor((index + 1) / 2)]
-        }
+        src={VIDEOS[Math.floor(index / 2)]}
+        stateNameRef={stateNameRef}
+      />
+      <VideoPlayer
+        src={VIDEOS[Math.floor((index + 1) / 2)]}
+        stateNameRef={stateNameRef}
       />
     </Container>
   );
