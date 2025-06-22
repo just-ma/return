@@ -1,8 +1,8 @@
 type StateBuilder = {
   name: string;
-  playbackRate: number;
-  hidden?: boolean;
-  flicker?: boolean;
+  playbackRate?: number; // default 1
+  hidden?: boolean; // default false
+  flicker?: boolean; // default false
   frequency?: number; // 1-10, default 10
   timeout?: number; // default 1000
 };
@@ -17,13 +17,11 @@ type State = {
 const CALM_STATES: StateBuilder[] = [
   {
     name: "hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 800,
   },
   {
     name: "brief-hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 200,
   },
@@ -39,7 +37,6 @@ const CALM_STATES: StateBuilder[] = [
   },
   {
     name: "playing",
-    playbackRate: 1,
     timeout: 2000,
   },
   {
@@ -52,19 +49,16 @@ const CALM_STATES: StateBuilder[] = [
 const DEFAULT_STATES: StateBuilder[] = [
   {
     name: "hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 800,
   },
   {
     name: "brief-hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 200,
   },
   {
     name: "briefer-hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 100,
   },
@@ -74,7 +68,6 @@ const DEFAULT_STATES: StateBuilder[] = [
   },
   {
     name: "playing",
-    playbackRate: 1,
   },
   {
     name: "slow",
@@ -93,19 +86,16 @@ const DEFAULT_STATES: StateBuilder[] = [
 const EXCITED_STATES: StateBuilder[] = [
   {
     name: "hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 300,
   },
   {
     name: "brief-hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 200,
   },
   {
     name: "briefer-hidden",
-    playbackRate: 0,
     hidden: true,
     timeout: 100,
   },
@@ -121,7 +111,6 @@ const EXCITED_STATES: StateBuilder[] = [
   },
   {
     name: "playing",
-    playbackRate: 1,
     timeout: 500,
   },
   {
@@ -158,7 +147,7 @@ export const STATES = Object.entries(STATES_BUILDER).reduce(
       for (let i = 0; i < (state.frequency || 10); i++) {
         acc.push({
           hidden: !!state.hidden,
-          playbackRate: state.playbackRate,
+          playbackRate: state.playbackRate ?? 1,
           flicker: !!state.flicker,
           timeout: state.timeout || 1000,
         });

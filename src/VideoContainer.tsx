@@ -3,7 +3,7 @@ import styled from "styled-components";
 import useVideo from "./useVideo";
 import { VIDEOS, NUM_VIDEOS } from "./videos";
 
-const easeOutSine = (x: number) => Math.sin((x * Math.PI) / 2);
+const easeInOutSine = (x: number) => -(Math.cos(Math.PI * x) - 1) / 2;
 
 const Container = styled.div<{ opacity: number }>`
   display: flex;
@@ -49,20 +49,27 @@ const VideoPlayer = ({
   );
 };
 
-export default function VideoContainer({ opacity }: { opacity: number }) {
+export default function VideoContainer({ opacity: number }) {
   const stateNameRef = useRef(2);
 
   const [dimmed, setDimmed] = useState(true);
   const [index, setIndex] = useState(0);
+  const [opacity, setOpacity] = useState(0);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       switch (e.key) {
         case "ArrowLeft":
-          setIndex((prev) => (prev - 1) % NUM_VIDEOS);
+          setIndex((prev) => Math.max(prev - 1, 0));
           break;
         case "ArrowRight":
-          setIndex((prev) => (prev + 1) % NUM_VIDEOS);
+          setIndex((prev) => Math.min(prev + 1, NUM_VIDEOS - 1));
+          break;
+        case "ArrowDown":
+          setOpacity((prev) => Math.max(prev - 0.05, 0));
+          break;
+        case "ArrowUp":
+          setOpacity((prev) => Math.min(prev + 0.05, 1));
           break;
         case "1": {
           stateNameRef.current = 1;
@@ -99,14 +106,16 @@ export default function VideoContainer({ opacity }: { opacity: number }) {
     };
   }, [opacity === 1]);
 
+  console.log(Math.floor(index / 2) + 1);
+
   return (
-    <Container opacity={dimmed ? easeOutSine(opacity) : opacity}>
+    <Container opacity={dimmed ? easeInOutSine(opacity) : opacity}>
       <VideoPlayer
-        src={VIDEOS[Math.floor(index / 2)]}
+        src={VIDEOS[Math.floor(index / 2) * 2]}
         stateNameRef={stateNameRef}
       />
       <VideoPlayer
-        src={VIDEOS[Math.floor((index + 1) / 2)]}
+        src={VIDEOS[Math.floor((index + 1) / 2) * 2 + 1]}
         stateNameRef={stateNameRef}
       />
     </Container>
